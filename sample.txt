@@ -1,4 +1,4 @@
- npm install -g @github/copilot
+npm install -g @github/copilot
 Homework 2 Machine Learning
 Trying to figure out Agents.
 This is new to me. 
