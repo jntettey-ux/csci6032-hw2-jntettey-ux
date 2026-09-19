@@ -17,3 +17,11 @@ The program prints JSON containing the number of `lines`, `words`, and
 ```bash
 python3 -m unittest discover
 ```
+
+To include the most frequent words, pass `--top N`. The output adds a `top`
+array whose entries contain the normalized `word` and its `count`. Words are
+matched case-insensitively and ties are ordered alphabetically:
+
+```bash
+python3 src/text_stats.py --top 5 sample.txt
+```

@@ -39,6 +39,27 @@ class TextStatsTests(unittest.TestCase):
                 {"lines": 0, "words": 0, "characters": 0},
             )
 
+    def test_top_words_are_case_insensitive_and_ties_are_alphabetical(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "top.txt"
+            path.write_text("Beta alpha ALPHA beta gamma", encoding="utf-8")
+
+            self.assertEqual(
+                get_text_stats(path, top=3)["top"],
+                [
+                    {"word": "alpha", "count": 2},
+                    {"word": "beta", "count": 2},
+                    {"word": "gamma", "count": 1},
+                ],
+            )
+
+    def test_top_zero_returns_no_words(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "top.txt"
+            path.write_text("one two", encoding="utf-8")
+
+            self.assertEqual(get_text_stats(path, top=0)["top"], [])
+
     def test_command_line_output_is_json(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "cli.txt"
@@ -54,6 +75,26 @@ class TextStatsTests(unittest.TestCase):
             self.assertEqual(
                 json.loads(result.stdout),
                 {"lines": 2, "words": 3, "characters": 13},
+            )
+
+    def test_command_line_top_option(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cli-top.txt"
+            path.write_text("Red blue RED green blue", encoding="utf-8")
+
+            result = subprocess.run(
+                [sys.executable, "src/text_stats.py", "--top", "2", str(path)],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(
+                json.loads(result.stdout)["top"],
+                [
+                    {"word": "blue", "count": 2},
+                    {"word": "red", "count": 2},
+                ],
             )
 
 
