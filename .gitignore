@@ -1,1 +1,2 @@
-.ipynb_checkpoints/
+.ipynb_checkpoints/.playwright-mcp/
+*.tar.gz
